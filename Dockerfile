@@ -1,26 +1,30 @@
-FROM node:12.20.0 AS builder
+FROM node:12.20.0-alpine AS builder
 
 # Create app directory
 WORKDIR /app
 
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY package*.json ./
-COPY prisma ./prisma/
+RUN npm ci
 
-# Install app dependencies
-RUN npm install
-# Required if not done in postinstall
-# RUN npx prisma generate
+COPY prisma ./prisma/
+RUN npm run prisma:generate
 
 COPY . .
 
 RUN npm run build
 
-FROM node:12.20.0
 
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/dist ./dist
+FROM node:12.20.0-alpine
+WORKDIR /app
 
-EXPOSE 3000
-CMD [ "npm", "run", "start:prod" ]
+COPY package*.json ./
+
+RUN npm install --production
+
+COPY --from=builder /app/dist ./
+COPY --from=builder /app/node_modules/.prisma/client ./node_modules/.prisma/client
+
+EXPOSE 80
+
+CMD [ "node", "./main.js" ]
