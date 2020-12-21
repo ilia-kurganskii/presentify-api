@@ -25,6 +25,7 @@ RUN npm install --production
 COPY --from=builder /app/dist ./
 COPY --from=builder /app/node_modules/.prisma/client ./node_modules/.prisma/client
 
+ENV NODE_ENV production
 EXPOSE 80
 
 CMD [ "node", "./main.js" ]
