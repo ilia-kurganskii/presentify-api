@@ -8,9 +8,20 @@ import {
   NestConfig,
   SwaggerConfig,
 } from './configs/config.interface';
+import { CustomLoggerService } from './common/logger/custom-logger/custom-logger.service';
+import winston from 'winston';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: new CustomLoggerService(
+      winston.createLogger({
+        level: 'info',
+        format: winston.format.json(),
+        defaultMeta: { service: 'presentify-api' },
+        transports: [new winston.transports.Console()],
+      })
+    ),
+  });
 
   // Validation
   app.useGlobalPipes(new ValidationPipe());
