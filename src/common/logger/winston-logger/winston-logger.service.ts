@@ -1,10 +1,12 @@
 import { Logger } from 'winston';
-import { LoggerService } from '@nestjs/common';
+import { Inject, Injectable, LoggerService } from '@nestjs/common';
+import { WINSTON_LOGGER } from '../logger.const';
 
-export class CustomLoggerService implements LoggerService {
+@Injectable()
+export class WinstonLoggerService implements LoggerService {
   private context?: string;
 
-  constructor(private readonly logger: Logger) {}
+  constructor(@Inject(WINSTON_LOGGER) private logger: Logger) {}
 
   public setContext(context: string) {
     this.context = context;
@@ -16,10 +18,15 @@ export class CustomLoggerService implements LoggerService {
     if ('object' === typeof message) {
       const { message: msg, ...meta } = message;
 
-      return this.logger.info(msg as string, { context, ...meta });
+      return this.logger.info(msg as string, {
+        context,
+        ...meta,
+      });
     }
 
-    return this.logger.info(message, { context });
+    return this.logger.info(message, {
+      context,
+    });
   }
 
   public error(message: any, trace?: string, context?: string): any {
@@ -55,10 +62,15 @@ export class CustomLoggerService implements LoggerService {
     if ('object' === typeof message) {
       const { message: msg, ...meta } = message;
 
-      return this.logger.warn(msg as string, { context, ...meta });
+      return this.logger.warn(msg as string, {
+        context,
+        ...meta,
+      });
     }
 
-    return this.logger.warn(message, { context });
+    return this.logger.warn(message, {
+      context,
+    });
   }
 
   public debug?(message: any, context?: string): any {
@@ -67,10 +79,15 @@ export class CustomLoggerService implements LoggerService {
     if ('object' === typeof message) {
       const { message: msg, ...meta } = message;
 
-      return this.logger.debug(msg as string, { context, ...meta });
+      return this.logger.debug(msg as string, {
+        context,
+        ...meta,
+      });
     }
 
-    return this.logger.debug(message, { context });
+    return this.logger.debug(message, {
+      context,
+    });
   }
 
   public verbose?(message: any, context?: string): any {
@@ -79,9 +96,14 @@ export class CustomLoggerService implements LoggerService {
     if ('object' === typeof message) {
       const { message: msg, ...meta } = message;
 
-      return this.logger.verbose(msg as string, { context, ...meta });
+      return this.logger.verbose(msg as string, {
+        context,
+        ...meta,
+      });
     }
 
-    return this.logger.verbose(message, { context });
+    return this.logger.verbose(message, {
+      context,
+    });
   }
 }
