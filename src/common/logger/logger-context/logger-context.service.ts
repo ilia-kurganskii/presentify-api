@@ -9,7 +9,7 @@ export class LoggerContextService {
   private readonly traceId = '';
 
   public constructor(@Inject(REQUEST) request: Request) {
-    this.traceId = request.headers['X-Request-ID'] ?? uuid();
+    this.traceId = request.headers['x-request-id'] ?? uuid();
   }
 
   public getTraceId(): string {
